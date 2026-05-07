@@ -1,58 +1,68 @@
-
 import { useState } from 'react';
-
+import { useNavigate } from 'react-router-dom';
 import '../components/Login.css';
 
-export default function Login() {
+export default function Login({ setUsuario }) {
   const [vista, setVista] = useState('login');
+  const [nombreInput, setNombreInput] = useState(''); 
+  const navigate = useNavigate();
 
-  const manejarInvitado = () => {
-    console.log("Accediendo como invitado");
-    alert("¡Bienvenido! Entrando como invitado...");
+  const manejarAcceso = (e, tipo) => {
+    if (e) e.preventDefault();
+    
+    if (tipo === 'login') {
+      
+      setUsuario(nombreInput || "Jugador 1");
+    } else {
+      
+      setUsuario(null);
+    }
+    navigate('/home');
   };
 
   return (
     <div className="login-screen">
       <div className="login-card">
         <div className="login-header">
-          <span style={{fontSize: '3rem'}}>🏉</span>
-          <h1>Aprende </h1>
-          <h1>Rugby</h1>
-          <p>Prepárate para el Scrum</p>
+          <span className="logo-icon">🏉</span>
+          <h1>APRENDE RUGBY</h1>
+          <p>La academia para los amantes del contacto</p>
         </div>
 
         {vista === 'login' ? (
-          <div className="auth-form">
-            <h2>Iniciar Sesión</h2>
+          <form className="auth-form" onSubmit={(e) => manejarAcceso(e, 'login')}>
+            <h2>Bienvenido de vuelta</h2>
             <div className="input-group">
-              <input type="email" placeholder="Correo electrónico" />
-              <input type="password" placeholder="Contraseña" />
+              <input type="email" placeholder="Correo electrónico" required />
+              <input type="password" placeholder="Contraseña" required />
             </div>
-            <button className="btn-primary">ENTRAR AL CAMPO</button>
+            <button type="submit" className="btn-primary">ENTRAR AL CAMPO</button>
             <p className="switch-text">
-              ¿No tienes equipo? <span onClick={() => setVista('registro')}>Regístrate</span>
+              ¿Nuevo? <span onClick={() => setVista('registro')}>Crea una cuenta</span>
             </p>
-          </div>
+          </form>
         ) : (
-          <div className="auth-form">
-            <h2>Crear Cuenta</h2>
+          <form className="auth-form" onSubmit={(e) => manejarAcceso(e, 'login')}>
+            <h2>Únete al equipo</h2>
             <div className="input-group">
-              <input type="text" placeholder="Tu nombre" />
-              <input type="email" placeholder="Tu correo" />
-              <input type="password" placeholder="Crea una contraseña" />
+              <input 
+                type="text" 
+                placeholder="Nombre completo" 
+                onChange={(e) => setNombreInput(e.target.value)} 
+                required 
+              />
+              <input type="email" placeholder="Correo electrónico" required />
+              <input type="password" placeholder="Contraseña" required />
             </div>
-            <button className="btn-primary">UNIRSE AL CLUB</button>
+            <button type="submit" className="btn-primary">REGISTRARME</button>
             <p className="switch-text">
               ¿Ya eres miembro? <span onClick={() => setVista('login')}>Inicia sesión</span>
             </p>
-          </div>
+          </form>
         )}
 
-        <div className="divider">
-          <span>O TAMBIÉN</span>
-        </div>
-
-        <button className="btn-guest" onClick={manejarInvitado}>
+        <div className="divider"><span>O TAMBIÉN</span></div>
+        <button className="btn-guest" onClick={(e) => manejarAcceso(e, 'invitado')}>
           ENTRAR COMO INVITADO
         </button>
       </div>
