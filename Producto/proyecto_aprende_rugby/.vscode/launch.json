@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-ProyectoAprendeRugbyApplication<proyecto_aprende_rugby>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "aprenderugby.proyecto_aprende_rugby.ProyectoAprendeRugbyApplication",
+            "projectName": "proyecto_aprende_rugby",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
