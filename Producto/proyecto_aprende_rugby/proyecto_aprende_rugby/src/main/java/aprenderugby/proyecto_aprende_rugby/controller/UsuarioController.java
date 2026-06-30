@@ -20,7 +20,7 @@ import aprenderugby.proyecto_aprende_rugby.services.UsuarioServices;
 @RestController
 @RequestMapping("/api/usuarios")
 // Permitimos que tu Vercel acceda de forma segura a este controlador
-@CrossOrigin(origins = "https://aprenderrugby-k1hy.vercel.app") 
+@CrossOrigin(origins = "https://aprenderugby-k1hy.vercel.app") 
 public class UsuarioController {
 
     private final UsuarioServices usuarioService;
