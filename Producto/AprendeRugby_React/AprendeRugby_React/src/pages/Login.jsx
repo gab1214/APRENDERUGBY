@@ -5,30 +5,28 @@ import '../components/Login.css';
 export default function Login({ setUsuario }) {
   const [vista, setVista] = useState('login');
   
-  // Estados para capturar lo que el usuario escribe
+
   const [emailInput, setEmailInput] = useState('');
   const [nombreInput, setNombreInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
 
   const navigate = useNavigate();
 
-  // Leemos la URL de tu API desde la variable de entorno de Vite
+  
   const API_BASE_URL = import.meta.env.VITE_API_URL;
 
   const manejarAcceso = async (e, tipo) => {
     if (e) e.preventDefault();
     
-    // Si entra como invitado, mantiene tu lógica original sin consultar a la API
     if (tipo === 'invitado') {
       setUsuario(null);
       navigate('/home');
       return;
     }
 
-    // Armamos la URL exacta de tu endpoint en Spring Boot (ajusta la ruta /auth/ si tus endpoints son diferentes)
-    const endpoint = tipo === 'login' ? '/api/auth/login' : '/api/auth/registro';
     
-    // Los datos que le enviaremos al servidor en formato JSON
+    const endpoint = tipo === 'login' ? '/api/usuarios/login' : '/api/usuarios';
+    
     const datosFormulario = tipo === 'login' 
       ? { email: emailInput, password: passwordInput }
       : { nombre: nombreInput, email: emailInput, password: passwordInput };
@@ -43,9 +41,9 @@ export default function Login({ setUsuario }) {
       });
 
       if (respuesta.ok) {
+        
         const datosUsuarioDelBackend = await respuesta.json();
         
-        // Guardamos en el estado global el usuario real que nos devuelve la base de datos
         setUsuario({
           nombre: datosUsuarioDelBackend.nombre || nombreInput || emailInput.split('@')[0],
           email: datosUsuarioDelBackend.email || emailInput
@@ -53,7 +51,6 @@ export default function Login({ setUsuario }) {
 
         navigate('/home');
       } else {
-        // Si el controlador de Spring Boot devuelve un error (ej: 401 Unauthorized o 400 Bad Request)
         alert(tipo === 'login' 
           ? 'Credenciales incorrectas. Verifica tu correo y contraseña.' 
           : 'Error al registrar el usuario. El correo electrónico podría estar en uso.');
