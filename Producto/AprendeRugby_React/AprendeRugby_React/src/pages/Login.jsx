@@ -12,20 +12,56 @@ export default function Login({ setUsuario }) {
 
   const navigate = useNavigate();
 
-  const manejarAcceso = (e, tipo) => {
+  // Leemos la URL de tu API desde la variable de entorno de Vite
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
+
+  const manejarAcceso = async (e, tipo) => {
     if (e) e.preventDefault();
     
-    if (tipo === 'login' || tipo === 'registro') {
-      // Guardamos tanto el nombre como el correo real ingresado
-      setUsuario({
-        nombre: tipo === 'login' ? (emailInput.split('@')[0]) : nombreInput || "Jugador",
-        email: emailInput
-      });
-    } else {
-      // Si entra como invitado, el usuario queda en null
+    // Si entra como invitado, mantiene tu lógica original sin consultar a la API
+    if (tipo === 'invitado') {
       setUsuario(null);
+      navigate('/home');
+      return;
     }
-    navigate('/home');
+
+    // Armamos la URL exacta de tu endpoint en Spring Boot (ajusta la ruta /auth/ si tus endpoints son diferentes)
+    const endpoint = tipo === 'login' ? '/api/auth/login' : '/api/auth/registro';
+    
+    // Los datos que le enviaremos al servidor en formato JSON
+    const datosFormulario = tipo === 'login' 
+      ? { email: emailInput, password: passwordInput }
+      : { nombre: nombreInput, email: emailInput, password: passwordInput };
+
+    try {
+      const respuesta = await fetch(`${API_BASE_URL}${endpoint}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(datosFormulario)
+      });
+
+      if (respuesta.ok) {
+        const datosUsuarioDelBackend = await respuesta.json();
+        
+        // Guardamos en el estado global el usuario real que nos devuelve la base de datos
+        setUsuario({
+          nombre: datosUsuarioDelBackend.nombre || nombreInput || emailInput.split('@')[0],
+          email: datosUsuarioDelBackend.email || emailInput
+        });
+
+        navigate('/home');
+      } else {
+        // Si el controlador de Spring Boot devuelve un error (ej: 401 Unauthorized o 400 Bad Request)
+        alert(tipo === 'login' 
+          ? 'Credenciales incorrectas. Verifica tu correo y contraseña.' 
+          : 'Error al registrar el usuario. El correo electrónico podría estar en uso.');
+      }
+    } catch (error) {
+      console.error("Error de conexión con el backend:", error);
+      alert("No se pudo conectar con el servidor. Por favor, intenta de nuevo más tarde.");
+    }
   };
 
   return (
