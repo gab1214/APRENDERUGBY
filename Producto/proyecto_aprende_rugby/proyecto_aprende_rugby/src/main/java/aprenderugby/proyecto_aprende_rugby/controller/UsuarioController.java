@@ -54,10 +54,10 @@ public class UsuarioController {
         boolean valido = usuarioService.validarLogin(email, password);
 
         if (valido) {
-            
+          
             Map<String, String> respuesta = new HashMap<>();
-            respuesta.add("status", "success");
-            respuesta.add("email", email);
+            respuesta.put("status", "success");
+            respuesta.put("email", email);
             return ResponseEntity.ok(respuesta);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
